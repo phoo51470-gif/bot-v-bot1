@@ -9,18 +9,27 @@ bot = telebot.TeleBot(TOKEN)
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    bot.reply_to(message, "မင်္ဂလာပါ! အသံဖိုင် ပို့ပေးပါက စာသားအဖြစ် ပြောင်းပေးပါမည်။")
+    bot.reply_to(message, "မင်္ဂလာပါ! အသံဖိုင် (သို့) Voice ပို့ပေးပါက စာသားအဖြစ် ပြောင်းပေးပါမည်။")
 
 @bot.message_handler(content_types=['voice', 'audio'])
 def handle_voice(message):
     try:
         bot.reply_to(message, "🎙️ အသံဖိုင်ကို စစ်ဆေးနေပါသည်...")
 
-        file_info = bot.get_file(message.voice.file_id)
+        # Voice လား၊ Audio လား စစ်ပြီး file_id ယူခြင်း
+        if message.voice:
+            file_info = bot.get_file(message.voice.file_id)
+            file_ext = "voice.ogg"
+        elif message.audio:
+            file_info = bot.get_file(message.audio.file_id)
+            file_ext = "audio.mp3"
+        else:
+            bot.reply_to(message, "⚠️ ကျေးဇူးပြု၍ မှန်ကန်သော အသံဖိုင် (Voice / Audio) ကို ပို့ပေးပါ။")
+            return
+
         downloaded_file = bot.download_file(file_info.file_path)
 
-        ogg_path = "voice.ogg"
-        with open(ogg_path, "wb") as f:
+        with open(file_ext, "wb") as f:
             f.write(downloaded_file)
 
         url = "https://api.groq.com/openai/v1/audio/transcriptions"
@@ -28,8 +37,8 @@ def handle_voice(message):
             "Authorization": f"Bearer {GROQ_API_KEY}"
         }
         
-        with open(ogg_path, "rb") as audio_file:
-            files = {"file": ("voice.ogg", audio_file, "audio/ogg")}
+        with open(file_ext, "rb") as audio_file:
+            files = {"file": (file_ext, audio_file, "audio/ogg")}
             data = {"model": "whisper-large-v3"}
             
             response = requests.post(url, headers=headers, files=files, data=data)
@@ -40,8 +49,8 @@ def handle_voice(message):
         else:
             bot.reply_to(message, f"❌ အမှားအယွင်းရှိပါသည်: {response.text}")
 
-        if os.path.exists(ogg_path):
-            os.remove(ogg_path)
+        if os.path.exists(file_ext):
+            os.remove(file_ext)
 
     except Exception as e:
         bot.reply_to(message, f"⚠️ ချို့ယွင်းချက်ရှိပါသည်: {str(e)}")
