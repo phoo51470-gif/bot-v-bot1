@@ -1,10 +1,19 @@
 import os
 import telebot
 import requests
-TOKEN = os.getenv("8919107632:AAGNt_J2-T8q1OVl2XU4UqijAULJGgApJ28")
-GROQ_API_KEY = os.getenv("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")
 
-bot = telebot.TeleBot(TOKEN)@bot.message_handler(content_types=['voice', 'audio'])def handle_voice(message):
+# တိုက်ရည့် တိုက်ဆိုင်စစ်ဆေးရန် သင့် Key များကို ဤနေရာတွင် ထည့်ပါ
+TOKEN = "8919107632:AAGNt_J2-T8q1OVl2XU4UqijAULJGgApJ28"
+GROQ_API_KEY = "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"
+
+bot = telebot.TeleBot(TOKEN)
+
+@bot.message_handler(commands=['start'])
+def send_welcome(message):
+    bot.reply_to(message, "မင်္ဂလာပါ! အသံဖိုင် ပို့ပေးပါက စာသားအဖြစ် ပြောင်းပေးပါမည်။")
+
+@bot.message_handler(content_types=['voice', 'audio'])
+def handle_voice(message):
     try:
         bot.reply_to(message, "🎙️ အသံဖိုင်ကို စစ်ဆေးနေပါသည်...")
 
@@ -36,8 +45,7 @@ bot = telebot.TeleBot(TOKEN)@bot.message_handler(content_types=['voice', 'audio'
             os.remove(ogg_path)
 
     except Exception as e:
-        bot.reply_to(message, f"⚠️ ချို့ယွင်းချက်ရှိပါသည်: {str(e)}")@bot.message_handler(commands=['start'])def send_welcome(message):
-    bot.reply_to(message, "မင်္ဂလာပါ! အသံဖိုင် ပို့ပေးပါက စာသားအဖြစ် ပြောင်းပေးပါမည်။")
+        bot.reply_to(message, f"⚠️ ချို့ယွင်းချက်ရှိပါသည်: {str(e)}")
 
 print("Bot စတင် အလုပ်လုပ်နေပါပြီ...")
 bot.infinity_polling()
