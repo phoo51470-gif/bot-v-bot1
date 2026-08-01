@@ -2,7 +2,7 @@ import os
 import telebot
 import requests
 
-TOKEN = "8718571147:AAFOSWu-vm_k0USxnEpwa1UwfOrNzZsQKhU"
+TOKEN = "8843597171:AAEnMDD2NGtryLLY4N359FechG04RhnhkpI"
 GROQ_API_KEY = "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"
 
 bot = telebot.TeleBot(TOKEN)
@@ -16,7 +16,6 @@ def handle_voice(message):
     try:
         bot.reply_to(message, "🎙️ အသံဖိုင်ကို စစ်ဆေးနေပါသည်...")
 
-        # Voice လား၊ Audio လား စစ်ပြီး file_id ယူခြင်း
         if message.voice:
             file_info = bot.get_file(message.voice.file_id)
             file_ext = "voice.ogg"
