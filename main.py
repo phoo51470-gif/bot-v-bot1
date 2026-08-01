@@ -1,5 +1,6 @@
-import osimport telebotimport requests
-
+import os
+import telebot
+import requests
 TOKEN = os.getenv("8919107632:AAGNt_J2-T8q1OVl2XU4UqijAULJGgApJ28")
 GROQ_API_KEY = os.getenv("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")
 
